@@ -50,7 +50,6 @@ class Mentor:
 class Lecturer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
-        self.courses_attached = []
         self.grades = {}
 
     def average_grade(self):
@@ -74,7 +73,6 @@ class Lecturer(Mentor):
 class Reviewer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
-        self.courses_attached = []
 
     def rate_hw(self, student, course, grade):
         if isinstance(student, Student) and course in self.courses_attached and course in student.courses_in_progress:
@@ -85,35 +83,76 @@ class Reviewer(Mentor):
         else:
             return 'Ошибка'
 
-best_student = Student('Ruoy', 'Eman', 'your_gender')
-best_student.courses_in_progress += ['Python']
-best_student.finished_courses += ['Введение в программирование']
+def average_grade_students(students, course):
+    total_grades = 0
+    count_grades = 0
+    for student in students:
+        if course in student.grades:
+            total_grades += sum(student.grades[course])
+            count_grades += len(student.grades[course])
+    if count_grades == 0:
+        return 0
+    return round(total_grades / count_grades, 2)
 
-cool_lecturer = Lecturer('Some', 'Buddy')
-cool_lecturer.courses_attached += ['Python']
+def average_grade_lecturers(lecturers, course):
+    total_grades = 0
+    count_grades = 0
+    for lecturer in lecturers:
+        if course in lecturer.grades:
+            total_grades += sum(lecturer.grades[course])
+            count_grades += len(lecturer.grades[course])
+    if count_grades == 0:
+        return 0
+    return round(total_grades / count_grades, 2)
 
-best_student.rate_lecturer(cool_lecturer, 'Python', 10)
-best_student.rate_lecturer(cool_lecturer, 'Python', 9)
-best_student.rate_lecturer(cool_lecturer, 'Python', 8)
+student1 = Student('Ruoy', 'Eman', 'male')
+student1.courses_in_progress += ['Python']
+student1.finished_courses += ['Введение в программирование']
 
+student2 = Student('John', 'Doe', 'male')
+student2.courses_in_progress += ['Python']
+student2.finished_courses += ['Git']
 
-cool_reviewer = Reviewer('Some', 'Buddy')
-cool_reviewer.courses_attached += ['Python']
+lecturer1 = Lecturer('Some', 'Lecturer')
+lecturer1.courses_attached += ['Python']
 
-cool_reviewer.rate_hw(best_student, 'Python', 10)
-cool_reviewer.rate_hw(best_student, 'Python', 10)
-cool_reviewer.rate_hw(best_student, 'Python', 10)
+lecturer2 = Lecturer('Another', 'Lecturer')
+lecturer2.courses_attached += ['Python']
 
-print(best_student.grades)
+reviewer1 = Reviewer('Some', 'Reviewer')
+reviewer1.courses_attached += ['Python']
 
-print(best_student)
+reviewer2 = Reviewer('Another', 'Reviewer')
+reviewer2.courses_attached += ['Python']
+
+reviewer1.rate_hw(student1, 'Python', 10)
+reviewer1.rate_hw(student1, 'Python', 9)
+reviewer1.rate_hw(student2, 'Python', 8)
+
+student1.rate_lecturer(lecturer1, 'Python', 10)
+student1.rate_lecturer(lecturer1, 'Python', 9)
+student2.rate_lecturer(lecturer2, 'Python', 8)
+
+print(student1)
 print()
-print(cool_lecturer)
+print(student2)
 print()
-print(cool_reviewer)
+print(lecturer1)
+print()
+print(lecturer2)
+print()
+print(reviewer1)
+print()
+print(reviewer2)
 
-another_student = Student('John', 'Doe', 'male')
-another_student.courses_in_progress += ['Python']
-cool_reviewer.rate_hw(another_student, 'Python', 9)
+students = [student1, student2]
+lecturers = [lecturer1, lecturer2]
 
-print(best_student > another_student)
+print("\nСредняя оценка студентов по курсу 'Python':", average_grade_students(students, 'Python'))
+print("Средняя оценка лекторов по курсу 'Python':", average_grade_lecturers(lecturers, 'Python'))
+
+print("\nСравнение студентов:")
+print(student1 > student2)
+
+print("\nСравнение лекторов:")
+print(lecturer1 > lecturer2)
